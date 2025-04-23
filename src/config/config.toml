@@ -1,0 +1,30 @@
+# Configuration schema for DemoMaker
+# Default configuration values for different environments
+
+[default]
+# Default settings for all environments
+log_level = "INFO"
+temp_dir = "temp"
+output_dir = "output"
+allowed_image_formats = ["jpg", "jpeg", "png"]
+max_image_size_mb = 10
+
+[development]
+# Development environment settings
+log_level = "DEBUG"
+ai_model = "local"
+use_cached_assets = true
+
+[testing]
+# Testing environment settings
+log_level = "DEBUG"
+ai_model = "local"
+use_cached_assets = true
+test_data_dir = "tests/data"
+
+[production]
+# Production environment settings
+log_level = "INFO"
+ai_model = "cloud"
+use_cached_assets = false
+max_concurrent_processes = 4
