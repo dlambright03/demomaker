@@ -1,0 +1,33 @@
+{
+    "name": "DemoMaker Development",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "remoteUser": "vscode",
+    "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.flake8Enabled": true,
+        "python.linting.mypyEnabled": true,
+        "python.formatting.provider": "black",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    },
+    "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        "ms-python.isort",
+        "ms-python.mypy-type-checker"
+    ],
+    "forwardPorts": [],
+    "postCreateCommand": "./.devcontainer/initialize.sh",
+    "remoteEnv": {
+        "PYTHONPATH": "${containerWorkspaceFolder}"
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    }
+}
