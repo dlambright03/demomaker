@@ -94,11 +94,89 @@ If you prefer not to use DevContainers:
 
 ## Getting Started
 
-After installation, you can create a simple demo by running:
+DemoMaker provides a comprehensive command-line interface (CLI) for creating and managing demo videos. 
 
+### Basic Usage
+
+```bash
+python -m src.main <command> [options]
 ```
-python -m src.main --images path/to/images --description "A brief description of your demo"
+
+### Available Commands
+
+The DemoMaker CLI supports the following commands:
+
+- `create`: Create a new demo video from images and text
+- `list`: List all previously created demos
+- `info`: Display detailed information about a specific demo
+- `help`: Display help information
+
+### Creating a Demo
+
+To create a new demo video, use the `create` command with the following options:
+
+```bash
+python -m src.main create --images <path/to/images> --output <output/directory> --description "Your demo description" [options]
 ```
+
+Required arguments:
+- `--images` or `-i`: Directory containing images or a list of image paths
+- `--output` or `-o`: Output directory for the generated video
+- `--description` or `-d`: Text description of the demo content
+
+Optional arguments:
+- `--title` or `-t`: Title of the demo (defaults to "Untitled Demo")
+- `--duration` or `-D`: Target duration in seconds
+- `--config` or `-c`: Path to a custom configuration file
+
+#### Examples
+
+Create a demo using images from a directory:
+```bash
+python -m src.main create --images ./data/product_screenshots --output ./output --description "Product feature walkthrough"
+```
+
+Create a demo with a custom title and duration:
+```bash
+python -m src.main create --images ./data/product_screenshots --output ./output --description "Product feature walkthrough" --title "Product X Demo" --duration 120
+```
+
+### Listing Demos
+
+To list all previously created demos:
+
+```bash
+python -m src.main list
+```
+
+### Getting Demo Information
+
+To get detailed information about a specific demo:
+
+```bash
+python -m src.main info <demo_id>
+```
+
+### Getting Help
+
+For general help:
+
+```bash
+python -m src.main --help
+```
+
+For command-specific help:
+
+```bash
+python -m src.main create --help
+```
+
+### Supported Image Formats
+
+DemoMaker supports the following image formats:
+- JPEG (.jpg, .jpeg)
+- PNG (.png)
+- GIF (.gif)
 
 ## Environment Configuration
 
