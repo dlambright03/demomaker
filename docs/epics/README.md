@@ -6,7 +6,7 @@ This document provides an index of all project epics for the DemoMaker system. E
 
 | ID | Title | Status | Priority | Description |
 |----|-------|--------|----------|-------------|
-| E001 | Core System Architecture with CLI-Based Video Assembly | Planning | Critical | Establishes the foundational architecture and implements a core pipeline that takes user-provided images and generates a demo video with AI-created script and narration. |
+| E001 | Core System Architecture with CLI-Based Video Assembly | In Progress | Critical | Establishes the foundational architecture and implements a core pipeline that takes user-provided images and generates a demo video with AI-created script and narration. |
 | E002 | User Interface Implementation with Streamlit | Planning | High | Develops a user-friendly web interface using Streamlit that allows users to interact with the system more easily, upload images, review generated content, and download final videos. |
 | E003 | Project Wizard Implementation | Planning | High | Implements a step-by-step project creation wizard following the hybrid wizard-tabs architecture, focusing on software demos with AI script assistance. |
 | E004 | AI-Powered Slide Generation and Enhancement | Planning | Medium | Implements AI capabilities to automatically generate and enhance slides based on script content, with support for various media types including videos. |
