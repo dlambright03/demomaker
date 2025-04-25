@@ -4,7 +4,7 @@
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
 ## Status
-- Not Started
+- In Progress
 
 ## Description
 As a developer, I need to implement concrete classes for all core modules defined by the interfaces, following the modular monolithic architecture. I also need a module factory to create and connect these modules, ensuring proper dependency injection and loose coupling between components.
