@@ -1,0 +1,196 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "DemoMaker Configuration Schema",
+    "description": "Schema for validating DemoMaker configuration files",
+    "additionalProperties": true,
+    "properties": {
+        "default": {
+            "type": "object",
+            "title": "Default Configuration",
+            "description": "Default configuration settings that apply to all environments",
+            "additionalProperties": true
+        },
+        "development": {
+            "type": "object",
+            "title": "Development Environment",
+            "description": "Configuration for the development environment",
+            "additionalProperties": true
+        },
+        "testing": {
+            "type": "object",
+            "title": "Testing Environment",
+            "description": "Configuration for the testing environment",
+            "additionalProperties": true
+        },
+        "production": {
+            "type": "object",
+            "title": "Production Environment",
+            "description": "Configuration for the production environment",
+            "additionalProperties": true
+        },
+        "log_level": {
+            "type": "string",
+            "enum": [
+                "DEBUG",
+                "INFO",
+                "WARNING",
+                "ERROR",
+                "CRITICAL"
+            ],
+            "title": "Log Level",
+            "description": "The logging level for the application",
+            "default": "INFO"
+        },
+        "temp_dir": {
+            "type": "string",
+            "title": "Temporary Directory",
+            "description": "Directory for storing temporary files",
+            "default": "temp"
+        },
+        "output_dir": {
+            "type": "string",
+            "title": "Output Directory",
+            "description": "Directory for storing output files",
+            "default": "output"
+        },
+        "allowed_image_formats": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "title": "Allowed Image Formats",
+            "description": "Formats of images that the application can process",
+            "default": [
+                "jpg",
+                "jpeg",
+                "png"
+            ]
+        },
+        "max_image_size_mb": {
+            "type": "number",
+            "title": "Maximum Image Size",
+            "description": "Maximum size of images in megabytes",
+            "default": 10,
+            "minimum": 0
+        },
+        "ai_model": {
+            "type": "string",
+            "enum": [
+                "local",
+                "cloud"
+            ],
+            "title": "AI Model Type",
+            "description": "Type of AI model to use for script generation",
+            "default": "local"
+        },
+        "use_cached_assets": {
+            "type": "boolean",
+            "title": "Use Cached Assets",
+            "description": "Whether to use cached assets to speed up processing",
+            "default": true
+        },
+        "max_concurrent_processes": {
+            "type": "integer",
+            "title": "Maximum Concurrent Processes",
+            "description": "Maximum number of concurrent processes for video assembly",
+            "default": 2,
+            "minimum": 1
+        },
+        "script_generation": {
+            "type": "object",
+            "properties": {
+                "model": {
+                    "type": "string",
+                    "title": "Script Generation Model",
+                    "description": "Model to use for script generation",
+                    "default": "openai/gpt-3.5-turbo"
+                },
+                "temperature": {
+                    "type": "number",
+                    "title": "Temperature",
+                    "description": "Temperature for the AI model (higher means more creative)",
+                    "default": 0.7,
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "max_tokens": {
+                    "type": "integer",
+                    "title": "Maximum Tokens",
+                    "description": "Maximum number of tokens in the generated script",
+                    "default": 1000,
+                    "minimum": 1
+                }
+            }
+        },
+        "narration_generation": {
+            "type": "object",
+            "properties": {
+                "voice": {
+                    "type": "string",
+                    "title": "TTS Voice",
+                    "description": "Text-to-speech voice to use for narration",
+                    "default": "en-US-Neural2-F"
+                },
+                "rate": {
+                    "type": "number",
+                    "title": "Speech Rate",
+                    "description": "Rate of speech (1.0 is normal speed)",
+                    "default": 1.0,
+                    "minimum": 0.5,
+                    "maximum": 2.0
+                },
+                "pitch": {
+                    "type": "number",
+                    "title": "Speech Pitch",
+                    "description": "Pitch of speech (0.0 is normal pitch)",
+                    "default": 0.0,
+                    "minimum": -10.0,
+                    "maximum": 10.0
+                }
+            }
+        },
+        "video_assembly": {
+            "type": "object",
+            "properties": {
+                "framerate": {
+                    "type": "integer",
+                    "title": "Frame Rate",
+                    "description": "Frame rate of the output video",
+                    "default": 30,
+                    "minimum": 1
+                },
+                "resolution": {
+                    "type": "string",
+                    "title": "Resolution",
+                    "description": "Resolution of the output video (width x height)",
+                    "default": "1920x1080",
+                    "pattern": "^\\d+x\\d+$"
+                },
+                "format": {
+                    "type": "string",
+                    "title": "Video Format",
+                    "description": "Format of the output video",
+                    "default": "mp4",
+                    "enum": [
+                        "mp4",
+                        "mov",
+                        "avi",
+                        "webm"
+                    ]
+                },
+                "quality": {
+                    "type": "string",
+                    "title": "Video Quality",
+                    "description": "Quality of the output video",
+                    "default": "high",
+                    "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                    ]
+                }
+            }
+        }
+    }
+}
