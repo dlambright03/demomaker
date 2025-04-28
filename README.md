@@ -6,6 +6,15 @@ A Python-based application that leverages AI agents to automatically create and 
 
 DemoMaker is a modular monolithic application designed to generate demo videos from user-provided images and text descriptions. It uses AI to generate scripts, creates audio narration through text-to-speech, and assembles everything into a polished demo video.
 
+## Features
+
+- **Environment-Based Configuration**: Supports development, testing, and production environments with appropriate configuration management
+- **AI-Powered Script Generation**: Automatically creates narration scripts based on image content and user-provided descriptions
+- **Text-to-Speech Narration**: Converts generated scripts into natural-sounding audio narration
+- **Automatic Video Assembly**: Combines images and narration into a cohesive demo video
+- **File-Based Storage System**: Manages project assets and output files
+- **Command-Line Interface**: Easy-to-use CLI for batch processing and automation
+
 ## Directory Structure
 
 ```
@@ -222,3 +231,31 @@ Each module has a defined interface in the `src/interfaces` directory. Any imple
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Project Status
+
+The following components have been implemented:
+
+- ✅ Project Structure Setup (S001)
+- ✅ Development Environment Setup (S002)
+- ✅ Module Interfaces for Core Components (S011)
+- ✅ Configuration Management System (S008)
+- 🔄 Module Implementations (S012) - In Progress
+- ⬜ Command Line Interface (S003)
+- ⬜ File-Based Storage System (S007)
+- ⬜ Script Generation Module (S004)
+- ⬜ Narration Generator Module (S005)
+- ⬜ Video Assembly Module (S006)
+- ⬜ Error Handling (S013)
+- ⬜ End-to-End Pipeline (S015)
+
+## Configuration
+
+DemoMaker uses a layered configuration system that supports multiple environments:
+
+- **Environment Support**: Configure for development, testing, or production
+- **Layered Configuration**: Default values, config files, environment variables, and command-line arguments
+- **Validation**: Configuration values are validated against a JSON schema
+- **Security**: Sensitive information is handled securely and masked when saving
+
+For more details, see the [Configuration Documentation](docs/configuration.md).
