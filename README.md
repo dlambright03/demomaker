@@ -234,20 +234,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Project Status
 
-The following components have been implemented:
+All project tasks and their current status are tracked through GitHub issues. You can view the current project status and task details at:
 
-- ✅ Project Structure Setup (S001)
-- ✅ Development Environment Setup (S002)
-- ✅ Module Interfaces for Core Components (S011)
-- ✅ Configuration Management System (S008)
-- 🔄 Module Implementations (S012) - In Progress
-- ⬜ Command Line Interface (S003)
-- ⬜ File-Based Storage System (S007)
-- ⬜ Script Generation Module (S004)
-- ⬜ Narration Generator Module (S005)
-- ⬜ Video Assembly Module (S006)
-- ⬜ Error Handling (S013)
-- ⬜ End-to-End Pipeline (S015)
+- [GitHub Issues](https://github.com/dlambright03/demomaker/issues)
+- [Project Board](https://github.com/users/dlambright03/projects/1)
 
 ## Configuration
 
