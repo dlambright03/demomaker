@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a developer, I need to ensure that unit test coverage is maintained and expanded throughout the development process of the DemoMaker application. This includes monitoring existing tests, creating new tests for added functionality, and addressing any failing tests promptly.
 

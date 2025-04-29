@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a user, I need a command-line interface (CLI) to interact with the DemoMaker application, allowing me to provide images and text descriptions that will be used to generate demo videos. The CLI should handle input validation, provide helpful feedback, and ensure all required data is collected before processing begins.
 

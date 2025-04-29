@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a user, I need the DemoMaker application to automatically generate a coherent and engaging script based on my provided images and description. This module will leverage AI models to create a script that effectively narrates and explains the content shown in the images.
 

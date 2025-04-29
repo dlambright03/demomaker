@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a developer, I need a well-defined JSON configuration schema for the DemoMaker application that standardizes all configurable settings, ensures configuration validation, and supports different environments (development, testing, production). This schema will serve as the contract for configuration across all modules.
 

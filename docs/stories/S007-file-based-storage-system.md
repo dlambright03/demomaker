@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a developer, I need to implement a file-based storage system for the DemoMaker application that manages all inputs, intermediate assets, and outputs. This system will handle the organization, persistence, and retrieval of all data used and produced by the application.
 

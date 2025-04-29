@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Complete
-
 ## Description
 As a developer, I need a consistent and reproducible method to set up the development environment for the DemoMaker application. This includes defining all dependencies, creating setup scripts, and providing clear documentation that allows any developer to be ready for development within 15 minutes.
 

@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a user, I need the DemoMaker application to convert the generated script into high-quality audio narration that will be used in the final demo video. This module will integrate with Text-to-Speech (TTS) services to create natural-sounding narration that follows the timing and pacing defined in the script.
 

@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a user, I need the DemoMaker application to combine my images with the generated audio narration into a professional-looking demo video. This module will use FFMPEG to assemble the final video product with appropriate timing, transitions, and synchronization.
 

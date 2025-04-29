@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a developer, I need to implement a comprehensive testing strategy for the DemoMaker application to ensure reliability, maintainability, and quality. This includes unit tests, integration tests, and system tests that verify the functionality of all core modules.
 

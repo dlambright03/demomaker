@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a developer, I need to integrate all the core modules into a cohesive end-to-end pipeline that can take user inputs (images and description) and produce a complete demo video through all processing stages. This represents the final assembly of the individual components into a working system.
 

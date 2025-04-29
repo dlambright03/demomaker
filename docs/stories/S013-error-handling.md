@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a developer, I need a consistent error handling strategy across the DemoMaker application to ensure that errors are properly caught, logged, and communicated to users. This includes defining custom exception types, implementing error handlers, and establishing patterns for error propagation between modules.
 

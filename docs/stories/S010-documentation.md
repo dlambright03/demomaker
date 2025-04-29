@@ -3,9 +3,6 @@
 ## Epic
 - [E001: Core System Architecture and CLI-Based Video Assembly](../epics/E001-core-system-architecture-cli-video-assembly.md)
 
-## Status
-- Not Started
-
 ## Description
 As a developer and user, I need comprehensive documentation for the DemoMaker application that explains how to use the system, how it works internally, and how to extend it. This documentation will serve as a guide for both users and developers working with the system.
 
