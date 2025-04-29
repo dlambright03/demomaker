@@ -1,0 +1,139 @@
+{
+  "title": "Demo: Demo of the Script Generation ...",
+  "description": "Demo of the Script Generation Module",
+  "total_duration": 20,
+  "segments": [
+    {
+      "id": "segment_0",
+      "image_path": "data/test_images/test1.png",
+      "start_time": 0,
+      "duration": 10.0,
+      "narration": "Welcome to this demonstration. Demo of the Script Generation Module... In this first image, we can see cup, document, plant.",
+      "content": {
+        "objects": [
+          {
+            "name": "cup",
+            "confidence": 0.89,
+            "bounding_box": {
+              "x": 0.47,
+              "y": 0.52,
+              "width": 0.25,
+              "height": 0.19
+            }
+          },
+          {
+            "name": "document",
+            "confidence": 0.83,
+            "bounding_box": {
+              "x": 0.25,
+              "y": 0.37,
+              "width": 0.33,
+              "height": 0.36
+            }
+          },
+          {
+            "name": "plant",
+            "confidence": 0.81,
+            "bounding_box": {
+              "x": 0.14,
+              "y": 0.41,
+              "width": 0.33,
+              "height": 0.26
+            }
+          },
+          {
+            "name": "graph",
+            "confidence": 0.77,
+            "bounding_box": {
+              "x": 0.79,
+              "y": 0.14,
+              "width": 0.45,
+              "height": 0.45
+            }
+          }
+        ],
+        "text": "Project Overview",
+        "colors": [
+          {
+            "name": "blue",
+            "hex": "#0066cc",
+            "percentage": 51
+          },
+          {
+            "name": "black",
+            "hex": "#000000",
+            "percentage": 49
+          }
+        ],
+        "composition": {
+          "layout": "grid",
+          "focus_point": {
+            "x": 0.62,
+            "y": 0.45
+          },
+          "symmetry": 0.96,
+          "complexity": 0.75
+        }
+      }
+    },
+    {
+      "id": "segment_1",
+      "image_path": "data/test_images/test2.png",
+      "start_time": 10.0,
+      "duration": 10.0,
+      "narration": "Next, we can see chair, phone. This illustrates a key aspect of our demonstration.",
+      "content": {
+        "objects": [
+          {
+            "name": "chair",
+            "confidence": 0.84,
+            "bounding_box": {
+              "x": 0.29,
+              "y": 0.26,
+              "width": 0.34,
+              "height": 0.24
+            }
+          },
+          {
+            "name": "phone",
+            "confidence": 0.75,
+            "bounding_box": {
+              "x": 0.62,
+              "y": 0.61,
+              "width": 0.38,
+              "height": 0.38
+            }
+          }
+        ],
+        "text": "Demo Maker",
+        "colors": [
+          {
+            "name": "purple",
+            "hex": "#6600cc",
+            "percentage": 57
+          },
+          {
+            "name": "gray",
+            "hex": "#666666",
+            "percentage": 43
+          }
+        ],
+        "composition": {
+          "layout": "grid",
+          "focus_point": {
+            "x": 0.38,
+            "y": 0.67
+          },
+          "symmetry": 0.96,
+          "complexity": 0.77
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "model": "local-model",
+    "image_count": 2,
+    "generation_timestamp": 1745893358.3634396,
+    "generation_time": 0.4513568878173828
+  }
+}

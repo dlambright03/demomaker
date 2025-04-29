@@ -1,19 +1,20 @@
 """
-Implementation of the Script Generator Module.
+Script Generator Module.
 
-This module is responsible for generating a structured script from
-user-provided images and descriptions using AI models.
+This module provides the implementation of the script generator interface
+for automatically generating coherent and engaging scripts from images.
 """
 
-import json
 import logging
-import random
+import os
+import threading
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
+
+from PIL import Image
 
 from src.interfaces.script_generator import (
-    AIModelError,
     ImageAnalysisError,
     InvalidInputError,
     ModelNotAvailableError,
@@ -21,52 +22,77 @@ from src.interfaces.script_generator import (
     ScriptGenerationTimeoutError,
     ScriptGeneratorInterface,
 )
+from src.modules.script_generator.ai_providers.factory import AIProviderFactory
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 
 class ScriptGenerator(ScriptGeneratorInterface):
-    """Implementation of the Script Generator Module."""
+    """
+    Script Generator implementation.
 
-    # Mock list of available models
-    AVAILABLE_MODELS = [
-        "gpt-3.5-turbo",
-        "gpt-4",
-        "claude-instant",
-        "claude-2",
-        "local-model",
-    ]
+    Generates coherent and engaging scripts based on provided images and descriptions
+    by leveraging AI models.
+    """
 
-    DEFAULT_MODEL = "gpt-3.5-turbo"
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        """
+        Initialize the script generator.
 
-    def __init__(self):
-        """Initialize the ScriptGenerator."""
-        self._model = self.DEFAULT_MODEL
-        self._is_generating = False
-        self._ai_client = None  # Would be initialized with an actual AI client
+        Args:
+            config: Optional configuration dictionary
+        """
+        self._config = config or {}
+        self._model_name = self._config.get("model", "local-model")
+        self._api_key = self._config.get("api_key")
+        self._default_target_duration = self._config.get("default_target_duration", 60)
+        self._provider = None
+        self._cancel_requested = False
+        self._generation_thread = None
+
+        # Initialize the AI provider
+        self._initialize_provider()
+
+    def _initialize_provider(self) -> None:
+        """Initialize the AI provider with the selected model."""
+        try:
+            self._provider = AIProviderFactory.create_provider(
+                self._model_name,
+                {"api_key": self._api_key},
+            )
+            logger.info(f"Initialized script generator with model: {self._model_name}")
+        except Exception as e:
+            logger.error(f"Error initializing provider: {str(e)}")
+            # Fall back to local provider
+            self._model_name = "local-model"
+            self._provider = AIProviderFactory.create_provider(self._model_name)
+            logger.info("Falling back to local provider")
 
     def generate_script(
         self,
-        images: List[Path],
+        images: List[Union[str, Path, bytes]],
         description: str,
         title: Optional[str] = None,
         target_duration: Optional[int] = None,
     ) -> Dict[str, Any]:
         """
-        Generate a structured script based on the provided images and description.
+        Generate a script based on provided images and description.
 
         Args:
-            images: List of validated image Path objects
-            description: Text description of the demo content
-            title: Title of the demo (optional)
-            target_duration: Target duration in seconds (optional)
+            images: List of images (file paths, Path objects, or raw bytes)
+            description: Description of the content for script generation
+            title: Optional title for the script
+            target_duration: Optional target duration in seconds for the script
 
         Returns:
-            A dictionary containing the generated script with timing information
+            Dictionary containing the generated script with segments, timing, etc.
 
         Raises:
+            InvalidInputError: If the input is invalid
+            ImageAnalysisError: If image analysis fails
             ScriptGenerationError: If script generation fails
+            ScriptGenerationTimeoutError: If script generation times out
         """
         if not images:
             raise InvalidInputError("No images provided")
@@ -74,376 +100,256 @@ class ScriptGenerator(ScriptGeneratorInterface):
         if not description:
             raise InvalidInputError("No description provided")
 
+        if not self._provider:
+            self._initialize_provider()
+
+        if not self._provider.is_available():
+            raise ModelNotAvailableError(f"Model {self._model_name} is not available")
+
+        # Reset cancel flag
+        self._cancel_requested = False
+
         try:
-            # Mark generation as started
-            self._is_generating = True
+            # Analyze images
+            image_analyses = self.analyze_images(images)
 
-            # Set default title if none provided
-            if not title:
-                title = "Demo Script"
+            # Generate script from analyses
+            script = self._provider.generate_script_from_images(
+                image_analyses, description
+            )
 
-            # Set default duration if none provided
-            if not target_duration:
-                target_duration = len(images) * 10  # 10 seconds per image by default
+            # Add title if provided
+            if title:
+                script["title"] = title
 
-            # Analyze images to extract content information
-            image_analysis = self.analyze_images(images)
-
-            # In a real implementation, this would call an AI model
-            # For now, generate a placeholder script
-            logger.info(f"Generating script using model {self._model}...")
-
-            # Simulate processing time
-            time.sleep(2)
-
-            # Create a structured script
-            segments = []
-            current_time = 0
-
-            for i, (image, analysis) in enumerate(zip(images, image_analysis)):
-                # Determine segment duration
-                segment_duration = target_duration / len(images)
-
-                # Create a segment
-                segment = {
-                    "id": f"segment_{i}",
-                    "image_path": str(image),
-                    "start_time": current_time,
-                    "duration": segment_duration,
-                    "narration": self._generate_placeholder_narration(
-                        analysis, description, i
-                    ),
-                    "content": analysis.get("content", {}),
-                }
-
-                segments.append(segment)
-                current_time += segment_duration
-
-            # Create the full script
-            script = {
-                "title": title,
-                "description": description,
-                "total_duration": target_duration,
-                "segments": segments,
-                "metadata": {
-                    "model": self._model,
-                    "image_count": len(images),
-                    "generation_timestamp": time.time(),
-                },
-            }
-
-            logger.info(f"Script generated with {len(segments)} segments")
-
-            # Mark generation as completed
-            self._is_generating = False
+            # Adjust timing if target duration is specified
+            if target_duration:
+                script = self._adjust_timing(script, target_duration)
 
             return script
 
         except Exception as e:
-            self._is_generating = False
-            logger.error(f"Error generating script: {str(e)}", exc_info=True)
-            raise ScriptGenerationError(f"Failed to generate script: {str(e)}") from e
+            raise ScriptGenerationError(f"Script generation failed: {str(e)}") from e
 
-    def set_ai_model(self, model_name: str) -> None:
+    def analyze_images(
+        self, images: List[Union[str, Path, bytes]]
+    ) -> List[Dict[str, Any]]:
         """
-        Set the AI model to use for script generation.
+        Analyze images to extract content information.
 
         Args:
-            model_name: The name of the AI model to use
+            images: List of images (file paths, Path objects, or raw bytes)
+
+        Returns:
+            List of dictionaries containing analysis results for each image
 
         Raises:
-            ValueError: If the model name is invalid or unavailable
-        """
-        if model_name not in self.AVAILABLE_MODELS:
-            raise ModelNotAvailableError(f"Model not available: {model_name}")
-
-        self._model = model_name
-        logger.info(f"AI model set to: {model_name}")
-
-    def get_available_models(self) -> List[str]:
-        """
-        Get a list of available AI models for script generation.
-
-        Returns:
-            A list of available model names
-        """
-        return self.AVAILABLE_MODELS
-
-    def estimate_generation_time(self, num_images: int, description_length: int) -> int:
-        """
-        Estimate the time required to generate a script.
-
-        Args:
-            num_images: Number of images in the input
-            description_length: Length of the description in characters
-
-        Returns:
-            Estimated time in seconds
-        """
-        # Base time for initialization
-        estimated_time = 5
-
-        # Time per image for analysis
-        estimated_time += num_images * 2
-
-        # Time based on description length
-        estimated_time += (description_length / 1000) * 3
-
-        # Model-specific multiplier
-        model_multipliers = {
-            "gpt-3.5-turbo": 1.0,
-            "gpt-4": 2.0,
-            "claude-instant": 0.8,
-            "claude-2": 1.5,
-            "local-model": 0.5,
-        }
-
-        multiplier = model_multipliers.get(self._model, 1.0)
-        estimated_time *= multiplier
-
-        return int(estimated_time)
-
-    def cancel_generation(self) -> bool:
-        """
-        Cancel an ongoing script generation process.
-
-        Returns:
-            True if cancellation was successful, False otherwise
-        """
-        if not self._is_generating:
-            return False
-
-        # In a real implementation, this would signal the AI client to stop
-        logger.info("Cancelling script generation...")
-
-        # Mark as no longer generating
-        self._is_generating = False
-
-        return True
-
-    def analyze_images(self, images: List[Path]) -> List[Dict[str, Any]]:
-        """
-        Analyze images to extract relevant content for script generation.
-
-        Args:
-            images: List of validated image Path objects
-
-        Returns:
-            A list of dictionaries containing analysis results for each image
-
-        Raises:
+            InvalidInputError: If input is invalid
             ImageAnalysisError: If image analysis fails
         """
         if not images:
             raise InvalidInputError("No images provided")
 
-        analysis_results = []
+        if not self._provider:
+            self._initialize_provider()
+
+        if not self._provider.is_available():
+            raise ModelNotAvailableError(f"Model {self._model_name} is not available")
+
+        image_analyses = []
 
         try:
-            for i, image_path in enumerate(images):
-                # In a real implementation, this would use an image analysis service or model
-                # For now, generate placeholder analysis results
-                logger.info(f"Analyzing image: {image_path}")
+            for image in images:
+                # Load image data
+                image_data = self._load_image(image)
 
-                # Simulate processing time
-                time.sleep(0.5)
+                # Analyze image content
+                analysis = self._provider.analyze_image_content(image_data)
+                image_analyses.append(analysis)
 
-                # Generate mock analysis
-                analysis = {
-                    "filename": image_path.name,
-                    "file_size": image_path.stat().st_size,
-                    "content": {
-                        "objects": self._generate_placeholder_objects(),
-                        "text": self._generate_placeholder_text(i),
-                        "colors": self._generate_placeholder_colors(),
-                        "composition": self._generate_placeholder_composition(),
-                    },
-                    "quality": {
-                        "resolution": "high",
-                        "blur_level": "low",
-                        "noise_level": "low",
-                    },
-                }
+                # Check for cancellation
+                if self._cancel_requested:
+                    raise ScriptGenerationError("Image analysis cancelled")
 
-                analysis_results.append(analysis)
-
-            return analysis_results
+            return image_analyses
 
         except Exception as e:
-            logger.error(f"Error analyzing images: {str(e)}", exc_info=True)
-            raise ImageAnalysisError(f"Failed to analyze images: {str(e)}") from e
+            raise ImageAnalysisError(f"Image analysis failed: {str(e)}") from e
 
-    def _generate_placeholder_narration(
-        self, image_analysis: Dict[str, Any], description: str, index: int
-    ) -> str:
+    def _load_image(self, image: Union[str, Path, bytes]) -> bytes:
         """
-        Generate placeholder narration for a script segment.
+        Load image data from various input types.
 
         Args:
-            image_analysis: Analysis results for the image
-            description: Overall description of the demo
-            index: Index of the segment
+            image: Image source (file path, Path object, or raw bytes)
 
         Returns:
-            Placeholder narration text
+            Raw image data as bytes
+
+        Raises:
+            InvalidInputError: If image cannot be loaded
         """
-        # Get image objects from analysis
-        objects = image_analysis.get("content", {}).get("objects", [])
-        objects_text = ", ".join([obj.get("name", "") for obj in objects[:3]])
+        try:
+            # If image is already bytes, return it directly
+            if isinstance(image, bytes):
+                return image
 
-        # Create placeholder narration based on segment index
-        if index == 0:
-            return f"Welcome to this demonstration. {description[:100]}... In this first image, we can see {objects_text}."
-        elif index == len(objects) - 1:
-            return f"Finally, in this image we can observe {objects_text}. This concludes our demonstration of {description[:50]}..."
-        else:
-            return f"Next, we can see {objects_text}. This illustrates a key aspect of our demonstration."
+            # If image is a string or Path, load it from file
+            if isinstance(image, (str, Path)):
+                image_path = Path(image)
+                if not image_path.exists():
+                    raise InvalidInputError(f"Image file not found: {image_path}")
 
-    def _generate_placeholder_objects(self) -> List[Dict[str, Any]]:
+                with open(image_path, "rb") as f:
+                    return f.read()
+
+            # Unknown input type
+            raise InvalidInputError(f"Unsupported image type: {type(image)}")
+
+        except Exception as e:
+            raise InvalidInputError(f"Failed to load image: {str(e)}") from e
+
+    def _adjust_timing(
+        self, script: Dict[str, Any], target_duration: int
+    ) -> Dict[str, Any]:
         """
-        Generate placeholder objects detected in an image.
-
-        Returns:
-            List of detected objects with confidence scores
-        """
-        # List of possible objects to "detect"
-        possible_objects = [
-            "person",
-            "table",
-            "chair",
-            "screen",
-            "monitor",
-            "keyboard",
-            "mouse",
-            "laptop",
-            "phone",
-            "notebook",
-            "pen",
-            "cup",
-            "coffee",
-            "window",
-            "door",
-            "plant",
-            "book",
-            "document",
-            "whiteboard",
-            "chart",
-            "graph",
-            "diagram",
-            "interface",
-            "button",
-            "text",
-        ]
-
-        # Randomly select 1-5 objects
-        num_objects = random.randint(1, 5)
-        selected_objects = random.sample(possible_objects, num_objects)
-
-        objects = []
-        for obj in selected_objects:
-            objects.append(
-                {
-                    "name": obj,
-                    "confidence": round(random.uniform(0.7, 0.98), 2),
-                    "bounding_box": {
-                        "x": round(random.uniform(0, 0.8), 2),
-                        "y": round(random.uniform(0, 0.8), 2),
-                        "width": round(random.uniform(0.1, 0.5), 2),
-                        "height": round(random.uniform(0.1, 0.5), 2),
-                    },
-                }
-            )
-
-        return objects
-
-    def _generate_placeholder_text(self, index: int) -> str:
-        """
-        Generate placeholder text detected in an image.
+        Adjust timing of script segments to match the target duration.
 
         Args:
-            index: Index of the image
+            script: Generated script with segments
+            target_duration: Target duration in seconds
 
         Returns:
-            Detected text
+            Adjusted script with updated timing
         """
-        # List of possible text to "detect"
-        possible_texts = [
-            "Project Overview",
-            "Demo Maker",
-            "Implementation Plan",
-            "User Interface",
-            "System Architecture",
-            "Data Flow",
-            "Results Analysis",
-            "Next Steps",
-            "Thank You",
-            "Questions?",
-        ]
+        segments = script.get("segments", [])
+        if not segments:
+            return script
 
-        # Select text based on index or randomly if index out of range
-        if index < len(possible_texts):
-            return possible_texts[index]
-        else:
-            return random.choice(possible_texts)
+        # Calculate current total duration
+        current_duration = script.get("total_duration", 0)
+        if current_duration == 0:
+            # Calculate from segments
+            current_duration = sum(segment.get("duration", 0) for segment in segments)
 
-    def _generate_placeholder_colors(self) -> List[Dict[str, Any]]:
+        # Skip if target matches current
+        if current_duration == target_duration:
+            return script
+
+        # Calculate adjustment factor
+        adjustment_factor = target_duration / current_duration
+
+        # Adjust each segment
+        adjusted_segments = []
+        adjusted_total = 0
+
+        for segment in segments:
+            original_duration = segment.get("duration", 0)
+            adjusted_duration = round(original_duration * adjustment_factor)
+
+            # Ensure at least 3 seconds per segment
+            adjusted_duration = max(3, adjusted_duration)
+
+            # Create adjusted segment
+            adjusted_segment = segment.copy()
+            adjusted_segment["duration"] = adjusted_duration
+            adjusted_segments.append(adjusted_segment)
+
+            adjusted_total += adjusted_duration
+
+        # Update script with adjusted segments and total
+        adjusted_script = script.copy()
+        adjusted_script["segments"] = adjusted_segments
+        adjusted_script["total_duration"] = adjusted_total
+
+        return adjusted_script
+
+    def set_ai_model(self, model_name: str) -> bool:
         """
-        Generate placeholder color palette for an image.
+        Set the AI model to use for script generation.
+
+        Args:
+            model_name: Name of the model
 
         Returns:
-            List of dominant colors in the image
+            True if model was set successfully, False otherwise
+
+        Raises:
+            ModelNotAvailableError: If the model is not available
         """
-        # List of possible colors
-        possible_colors = [
-            {"name": "blue", "hex": "#0066cc"},
-            {"name": "red", "hex": "#cc0000"},
-            {"name": "green", "hex": "#00cc66"},
-            {"name": "yellow", "hex": "#ffcc00"},
-            {"name": "purple", "hex": "#6600cc"},
-            {"name": "gray", "hex": "#666666"},
-            {"name": "black", "hex": "#000000"},
-            {"name": "white", "hex": "#ffffff"},
-        ]
+        if model_name == self._model_name and self._provider:
+            return True
 
-        # Randomly select 2-4 colors
-        num_colors = random.randint(2, 4)
-        selected_colors = random.sample(possible_colors, num_colors)
+        try:
+            # Check if model is available
+            available_models = self.get_available_models()
+            if model_name not in available_models:
+                raise ModelNotAvailableError(f"Model {model_name} is not available")
 
-        # Add percentage for each color
-        total = 100
-        colors = []
+            # Set model and reinitialize provider
+            self._model_name = model_name
+            self._initialize_provider()
 
-        for i, color in enumerate(selected_colors):
-            if i == len(selected_colors) - 1:
-                percentage = total
-            else:
-                percentage = random.randint(
-                    10, total - 10 * (len(selected_colors) - i - 1)
-                )
-                total -= percentage
+            return self._provider.is_available()
 
-            colors.append(
-                {"name": color["name"], "hex": color["hex"], "percentage": percentage}
-            )
+        except Exception as e:
+            logger.error(f"Error setting AI model: {str(e)}")
+            raise ModelNotAvailableError(f"Failed to set model {model_name}") from e
 
-        return colors
-
-    def _generate_placeholder_composition(self) -> Dict[str, Any]:
+    def get_available_models(self) -> List[str]:
         """
-        Generate placeholder composition analysis for an image.
+        Get a list of available AI models.
 
         Returns:
-            Composition analysis with focus points and layout
+            List of available model names
         """
-        # Layout options
-        layouts = ["centered", "grid", "left-aligned", "right-aligned", "split"]
+        return AIProviderFactory.get_available_models()
 
-        return {
-            "layout": random.choice(layouts),
-            "focus_point": {
-                "x": round(random.uniform(0.3, 0.7), 2),
-                "y": round(random.uniform(0.3, 0.7), 2),
-            },
-            "symmetry": round(random.uniform(0.5, 1.0), 2),
-            "complexity": round(random.uniform(0.2, 0.8), 2),
-        }
+    def estimate_generation_time(
+        self, num_images: int, description_length: int
+    ) -> float:
+        """
+        Estimate the time required for script generation.
+
+        Args:
+            num_images: Number of images
+            description_length: Length of the description text
+
+        Returns:
+            Estimated time in seconds
+        """
+        # Base time for processing
+        base_time = 2.0
+
+        # Time per image
+        image_time = 1.5 * num_images
+
+        # Time based on description length
+        desc_time = description_length / 200.0
+
+        # Model-specific multiplier
+        model_multiplier = 1.0
+        if "gpt-4" in self._model_name:
+            model_multiplier = 3.0
+        elif "gpt-3.5" in self._model_name:
+            model_multiplier = 2.0
+        elif "local" in self._model_name:
+            model_multiplier = 0.5
+
+        # Calculate total estimated time
+        estimated_time = (base_time + image_time + desc_time) * model_multiplier
+
+        return round(estimated_time, 1)
+
+    def cancel_generation(self) -> bool:
+        """
+        Cancel an in-progress script generation.
+
+        Returns:
+            True if cancellation was successful, False otherwise
+        """
+        if self._generation_thread and self._generation_thread.is_alive():
+            self._cancel_requested = True
+            return True
+
+        return False
