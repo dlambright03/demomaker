@@ -1,0 +1,159 @@
+{
+  "title": "Demo: Testing the Script Generator m...",
+  "description": "Testing the Script Generator module",
+  "total_duration": 20,
+  "segments": [
+    {
+      "id": "segment_0",
+      "image_path": "data/test_images/test1.png",
+      "start_time": 0,
+      "duration": 10.0,
+      "narration": "Welcome to this demonstration. Testing the Script Generator module... In this first image, we can see table, book, whiteboard.",
+      "content": {
+        "objects": [
+          {
+            "name": "table",
+            "confidence": 0.97,
+            "bounding_box": {
+              "x": 0.74,
+              "y": 0.42,
+              "width": 0.27,
+              "height": 0.12
+            }
+          },
+          {
+            "name": "book",
+            "confidence": 0.78,
+            "bounding_box": {
+              "x": 0.51,
+              "y": 0.39,
+              "width": 0.12,
+              "height": 0.21
+            }
+          },
+          {
+            "name": "whiteboard",
+            "confidence": 0.96,
+            "bounding_box": {
+              "x": 0.16,
+              "y": 0.5,
+              "width": 0.23,
+              "height": 0.42
+            }
+          },
+          {
+            "name": "person",
+            "confidence": 0.78,
+            "bounding_box": {
+              "x": 0.29,
+              "y": 0.34,
+              "width": 0.42,
+              "height": 0.16
+            }
+          }
+        ],
+        "text": "Project Overview",
+        "colors": [
+          {
+            "name": "blue",
+            "hex": "#0066cc",
+            "percentage": 61
+          },
+          {
+            "name": "white",
+            "hex": "#ffffff",
+            "percentage": 14
+          },
+          {
+            "name": "purple",
+            "hex": "#6600cc",
+            "percentage": 11
+          },
+          {
+            "name": "yellow",
+            "hex": "#ffcc00",
+            "percentage": 14
+          }
+        ],
+        "composition": {
+          "layout": "grid",
+          "focus_point": {
+            "x": 0.42,
+            "y": 0.47
+          },
+          "symmetry": 0.61,
+          "complexity": 0.53
+        }
+      }
+    },
+    {
+      "id": "segment_1",
+      "image_path": "data/test_images/test2.png",
+      "start_time": 10.0,
+      "duration": 10.0,
+      "narration": "Next, we can see plant, door. This illustrates a key aspect of our demonstration.",
+      "content": {
+        "objects": [
+          {
+            "name": "plant",
+            "confidence": 0.75,
+            "bounding_box": {
+              "x": 0.09,
+              "y": 0.24,
+              "width": 0.5,
+              "height": 0.47
+            }
+          },
+          {
+            "name": "door",
+            "confidence": 0.95,
+            "bounding_box": {
+              "x": 0.14,
+              "y": 0.64,
+              "width": 0.35,
+              "height": 0.23
+            }
+          }
+        ],
+        "text": "Demo Maker",
+        "colors": [
+          {
+            "name": "yellow",
+            "hex": "#ffcc00",
+            "percentage": 63
+          },
+          {
+            "name": "purple",
+            "hex": "#6600cc",
+            "percentage": 15
+          },
+          {
+            "name": "black",
+            "hex": "#000000",
+            "percentage": 11
+          },
+          {
+            "name": "gray",
+            "hex": "#666666",
+            "percentage": 11
+          }
+        ],
+        "composition": {
+          "layout": "left-aligned",
+          "focus_point": {
+            "x": 0.4,
+            "y": 0.41
+          },
+          "symmetry": 0.78,
+          "complexity": 0.49
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "model": "local-model",
+    "image_count": 2,
+    "generation_timestamp": 1745892916.5274007,
+    "generation_time": 0.42108726501464844
+  }
+}
