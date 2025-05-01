@@ -2,6 +2,10 @@
 
 A Python-based application that leverages AI agents to automatically create and narrate professional demo videos.
 
+## Disclaimer
+
+This codebase was made as an experiment with using Github Copilot to completely plan and implement a project. It is not complete and not recommended to use.
+
 ## Project Overview
 
 DemoMaker is a modular monolithic application designed to generate demo videos from user-provided images and text descriptions. It uses AI to generate scripts, creates audio narration through text-to-speech, and assembles everything into a polished demo video.
